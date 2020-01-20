@@ -6,12 +6,9 @@ namespace StrongRecursion
 {
     public class StackFrame
     {
-        public int n = 0;
-        public int result = 0;
+        public Params Params { get; set; }
+        public Result Result { get; set; }
 
-        public Params Params => null;
-        public Result Result => null;
-        
     }
 
     /// <summary>

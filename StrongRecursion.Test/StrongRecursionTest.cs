@@ -15,27 +15,44 @@ namespace StrongRecursion.Test
             int n = 5000;
             int expected = (n * (n + 1)) / 2;
 
-            int actual1 = StrongRecursion(n);
-            Assert.AreEqual(expected, actual1);
-
-            int actual2 = SafeRecursion(n);
-            Assert.AreEqual(expected, actual2);
-
+            // Usual recursion using program's call-stack
             int actual = Sum(n);
             Assert.AreEqual(expected, actual);
+
+            // PoC of the strong recursion idea that does not use program's call stack for recursion
+            int actual1 = CoreLogic(n);
+            Assert.AreEqual(expected, actual1);
+
+            // PoC of RecursionBuilder
+            int actual2 = StrongRecursion(n);
+            Assert.AreEqual(expected, actual2);            
         }
 
-        private int SafeRecursion(int input)
+        private int StrongRecursion(int input)
         {
-            var builder = new RecursionBuilder()
-                .WithLimitingCondition((p) => { return true; })
-                .WithLimitingLogic((p, r) => { return new Result() { res = 1 }; })
+            var result = new RecursionBuilder()
+                .WithLimitingCondition((p) => 
+                {
+                    // Custom predicate for limiting condition by user
+                    return (p.n == 1); 
+                })
+                .WithLimitingLogic((p, r) => 
+                {
+                    // Custom logic by user
+                    return new Result() { res = 1 + r.res }; 
+                })
                 .WithLogic((p, r) =>
                 {
-                    return new Result() { res = 2 };
+                    // Custom logic by user
+                    return new StackFrame()
+                    {
+                        Params = new Params() { n = p.n - 1 },
+                        Result = new Result() { res = p.n + r.res }
+                    };                    
                 })
-                .Run(new Params() { n = 5000 });
+                .Run(new Params() { n = input });
 
+            return result.res;
         }
 
         /// <summary>
@@ -43,10 +60,14 @@ namespace StrongRecursion.Test
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private int StrongRecursion(int input)
+        private int CoreLogic(int input)
         {
             Stack<StackFrame> stack = new Stack<StackFrame>();
-            stack.Push(new StackFrame() { n = input, result = 0});
+            stack.Push(new StackFrame() 
+            { 
+                Params = new Params() { n = input },
+                Result = new Result() { res = 0 }
+            });
 
             int finalResult = 0;
 
@@ -54,15 +75,15 @@ namespace StrongRecursion.Test
             {
                 var frame = stack.Pop();
 
-                if(frame.n == 1)
+                if(frame.Params.n == 1)
                 {
-                    finalResult = frame.result + frame.n;
+                    finalResult = frame.Result.res + frame.Params.n;
                 }
                 else
                 {
                     var newFrame = new StackFrame() {
-                        n = frame.n - 1,
-                        result = frame.result + frame.n
+                        Params = new Params() { n = frame.Params.n-1 },
+                        Result = new Result() { res = frame.Result.res + frame.Params.n }
                     };
                     stack.Push(newFrame);
                 }
@@ -73,13 +94,11 @@ namespace StrongRecursion.Test
         private int Sum(int n)
         {
             // sum = 1 + 2 + 3 + ..... + n
-
             // Limiting condition
             if( n == 1)
             {
                 return 1;
             }
-
             return n + Sum(n - 1);
         }
     }
