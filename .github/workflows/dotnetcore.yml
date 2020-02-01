@@ -30,8 +30,7 @@ jobs:
         pwd
         dotnet restore
         dotnet --info
-        dotnet build --configuration Release
-# run xUnit tests
+        dotnet test --configuration Release
       timeout-minutes: 10
   
     
