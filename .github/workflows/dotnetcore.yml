@@ -1,18 +1,29 @@
 name: .NET Core
 
-on: [push]
+on: [push, pull_request]
 jobs:
-  build:
+  job1build:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
+    - name: Show info
+      run: |
+        echo Current directory ==> %cd%
+        dir
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.0.100
-    - name: Build with dotnet
+    - name: Build with dotnet - Main project
+      working-directory: ./StrongRecursion
       run: dotnet build --configuration Release
       timeout-minutes: 10
+    - name: Build with dotnet - Test project
+      working-directory: ./StrongRecursion.Test
+      run: dotnet build --configuration Release
+      timeout-minutes: 10
+  
+    
     
