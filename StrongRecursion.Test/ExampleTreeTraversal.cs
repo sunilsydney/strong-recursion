@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StrongRecursion;
 using StrongRecursion.Test.Tree;
 using System.Linq;
+using System.Threading;
+using Xunit;
 
 namespace StrongRecursion.Test
-{
-    [TestClass]
+{    
     public class ExampleTreeTraversal
     {
         /// <summary>
@@ -16,7 +16,7 @@ namespace StrongRecursion.Test
         /// This test proves conventional recursion runs into stack-overflow,
         /// while StrongRecursion does not.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public void TreeTraversalTest()
         {
             // Arrange
@@ -26,8 +26,21 @@ namespace StrongRecursion.Test
 
             // Action 2 : Using conventional recursion, to prove it causes stack-overflow
             Log("Traversing the tree using conventional recurion");
-            TraverseByConventionalRecurion(tree.RootNode);
+            Log("Doing this on a new thread so that main thread is able to report test status");
 
+            try
+            {
+                Thread t1 = new Thread(DoWork);
+                t1.Start(tree.RootNode);
+            } 
+            catch(Exception ex)
+            {
+                Log(ex.ToString());
+            }
+
+            Thread.Sleep(TimeSpan.FromSeconds(30));
+
+            Assert.Equal("RootNode", tree.RootNode.Data); //Verifies stackoverflow happened. Otherwise, DoWork() would have modified this value
             /*
             In VisualStudio Output window (Tests), observe
             
@@ -37,6 +50,22 @@ namespace StrongRecursion.Test
             Process is terminated due to StackOverflowException.
             [1/02/2020 4:36:01.343 PM] ========== Run aborted: 0 tests run (0:00:17.1237768) ==========
             */
+        }
+
+        public void DoWork(Object obj)
+        {
+            Node root = (Node)obj;
+            try
+            {
+                TraverseByConventionalRecurion(root);
+            }
+            catch (Exception ex) // Chances of catching StackOverflow Exception are bleak
+            {
+
+                
+            }
+            
+            root.Data = "Completed";
         }
 
         private void TraverseByConventionalRecurion(Node node)

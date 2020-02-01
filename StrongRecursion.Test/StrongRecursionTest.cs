@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StrongRecursion;
+using Xunit;
 
 namespace StrongRecursion.Test
-{
-    [TestClass]
+{    
     public class StrongRecursionTest
     {
-        [TestMethod]
+        [Fact]
         public void PoC()
         {
             // Arrange
@@ -17,15 +16,15 @@ namespace StrongRecursion.Test
 
             // Usual recursion using program's call-stack
             int actual = Sum(n);
-            Assert.AreEqual(expected, actual);
+            Assert.Equal(expected, actual);
 
             // PoC of the strong recursion idea that does not use program's call stack for recursion
             int actual1 = CoreLogic(n);
-            Assert.AreEqual(expected, actual1);
+            Assert.Equal(expected, actual1);
 
             // PoC of RecursionBuilder
             int actual2 = StrongRecursion(n);
-            Assert.AreEqual(expected, actual2);            
+            Assert.Equal(expected, actual2);            
         }
 
         private int StrongRecursion(int input)
