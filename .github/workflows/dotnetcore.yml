@@ -1,0 +1,38 @@
+# Uses powershell
+# Refer https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#using-a-specific-shell
+name: Build and Test StrongRecursion
+
+on: [push, pull_request]
+jobs:
+  build-and-test:
+
+    runs-on: [windows-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Show info
+      run: |
+        pwd
+        dir
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+    - name: Build with dotnet - Main project
+      working-directory: ./StrongRecursion
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
+      timeout-minutes: 10
+    - name: Build with dotnet - Test project
+      working-directory: ./StrongRecursion.Test
+      run: |
+        pwd
+        dotnet restore
+        dotnet --info
+        dotnet build --configuration Release
+# run xUnit tests
+      timeout-minutes: 10
+  
+    
+    
