@@ -1,6 +1,6 @@
 # Uses powershell
 # Refer https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#using-a-specific-shell
-name: Strong Recursion
+name: Build and Test StrongRecursion
 
 on: [push, pull_request]
 jobs:
@@ -27,7 +27,8 @@ jobs:
       run: |
         pwd
         dotnet --info
-#        dotnet build --configuration Release
+        dotnet build --configuration Release
+# run xUnit tests
       timeout-minutes: 10
   
     
