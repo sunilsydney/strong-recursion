@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using StrongRecursion;
+﻿using System.Collections.Generic;
 using Xunit;
 
 namespace StrongRecursion.Test
-{    
+{
     public class StrongRecursionTest
     {
         [Fact]

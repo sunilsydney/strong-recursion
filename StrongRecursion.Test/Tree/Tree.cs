@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StrongRecursion.Test.Tree
+﻿namespace StrongRecursion.Test.Tree
 {
     public class Tree
     {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StrongRecursion.Test.Tree
+﻿namespace StrongRecursion.Test.Tree
 {
     public class TreeHelper
     {
@@ -33,8 +27,8 @@ namespace StrongRecursion.Test.Tree
 
             for (int i = 1; i < depth; i++)
             {
-                currentNode.Left = new Node() { Data = $"Left-{i}" };
-                currentNode.Right = new Node() { Data = $"Right-{i}" };
+                currentNode.Left = new Node() { Data = $"Left node at depth {i}" };
+                currentNode.Right = new Node() { Data = $"Right node at depth {i}" };
 
                 // Tree grows only on the left side for this example
                 currentNode = currentNode.Left;
