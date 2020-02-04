@@ -25,7 +25,7 @@
 
             Node currentNode = tree.RootNode;
 
-            for (int i = 1; i < depth; i++)
+            for (int i = 1; i <= depth; i++)
             {
                 currentNode.Left = new Node() { Data = $"Left node at depth {i}" };
                 currentNode.Right = new Node() { Data = $"Right node at depth {i}" };

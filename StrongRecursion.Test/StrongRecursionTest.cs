@@ -5,6 +5,9 @@ namespace StrongRecursion.Test
 {
     public class StrongRecursionTest
     {
+        /// <summary>
+        /// Proof of concept of StrongRecursion
+        /// </summary>
         [Fact]
         public void PoC()
         {
@@ -28,32 +31,37 @@ namespace StrongRecursion.Test
         private int StrongRecursion(int input)
         {
             var result = new RecursionBuilder()
-                .WithLimitingCondition((p) => 
+                .WithLimitingCondition((p) =>
                 {
                     // Custom predicate for limiting condition by user
-                    return (p.n == 1); 
+                    var inputParams = (DemoParams)p;
+                    return (inputParams.N == 1);
                 })
-                .WithLimitingLogic((p, r) => 
+                .WithLimitingLogic((p, r) =>
                 {
                     // Custom logic by user
-                    return new Result() { res = 1 + r.res }; 
+                    var prevResult = (DemoResult)r;
+                    return new DemoResult() { Res = 1 + prevResult.Res };
                 })
                 .WithLogic((p, r) =>
                 {
                     // Custom logic by user
+                    var inputParams = (DemoParams)p;
+                    var prevResult = (DemoResult)r;
                     return new StackFrame()
                     {
-                        Params = new Params() { n = p.n - 1 },
-                        Result = new Result() { res = p.n + r.res }
-                    };                    
+                        Params = new DemoParams() { N = inputParams.N - 1 },
+                        Result = new DemoResult() { Res = inputParams.N + prevResult.Res }
+                    };
                 })
-                .Run(new Params() { n = input });
+                .WithInitialResult(new DemoResult() { Res = 0 })
+                .Run(new DemoParams() { N = input });
 
-            return result.res;
+            return ((DemoResult)result).Res;
         }
 
         /// <summary>
-        /// TODO reference one frame from another to sort of chain the calculation?
+        /// Consider referencing one frame from another to sort of chain the calculation?
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -62,8 +70,8 @@ namespace StrongRecursion.Test
             Stack<StackFrame> stack = new Stack<StackFrame>();
             stack.Push(new StackFrame() 
             { 
-                Params = new Params() { n = input },
-                Result = new Result() { res = 0 }
+                Params = new DemoParams() { N = input },
+                Result = new DemoResult() { Res = 0 }
             });
 
             int finalResult = 0;
@@ -72,15 +80,17 @@ namespace StrongRecursion.Test
             {
                 var frame = stack.Pop();
 
-                if(frame.Params.n == 1)
+                var frameParams = (DemoParams)frame.Params;
+                var frameResult = (DemoResult)frame.Result;
+                if(frameParams.N == 1)
                 {
-                    finalResult = frame.Result.res + frame.Params.n;
+                    finalResult = frameResult.Res + frameParams.N;
                 }
                 else
                 {
                     var newFrame = new StackFrame() {
-                        Params = new Params() { n = frame.Params.n-1 },
-                        Result = new Result() { res = frame.Result.res + frame.Params.n }
+                        Params = new DemoParams() { N = frameParams.N -1 },
+                        Result = new DemoResult() { Res = frameResult.Res + frameParams.N }
                     };
                     stack.Push(newFrame);
                 }

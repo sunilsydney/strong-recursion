@@ -11,6 +11,8 @@ namespace StrongRecursion
         Func<Params, bool> _limitingCondition;
         Func<Params, Result, Result> _limitingLogic;
         Func<Params, Result, StackFrame> _logic;
+        Result _initialResult = null;
+
 
         public RecursionBuilder WithLimitingCondition(Func<Params, bool> func)
         {
@@ -30,14 +32,22 @@ namespace StrongRecursion
             return this;
         }
 
+        public RecursionBuilder WithInitialResult(Result result)
+        {
+            _initialResult = result;
+            return this;
+        }
+
         public Result Run(Params prms)
         {
+            // TODO validate all private members
+
             Stack<StackFrame> stack = new Stack<StackFrame>();
             // Initial frame
             stack.Push(new StackFrame()
             {
                 Params = prms,
-                Result = new Result() { res = 0 }
+                Result = _initialResult
             });
 
             Result finalResult = null;

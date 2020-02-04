@@ -25,6 +25,11 @@ namespace StrongRecursion.Test
             var tree = TreeHelper.CreateTree(depth);
 
             // Action 1 : Using StrongRecurion to prove it doesn't cause stack-overflow
+            int nodeCount = TraverseByStrongRecurion(tree.RootNode);
+
+            // Assert 1
+            Assert.True(true); // Yes, if control reaches this point, stack overflow did not happen
+            Assert.Equal(((depth * 2) + 1), nodeCount); // This equation is very specific to the structure of the sample tree
 
             // Action 2 : Using conventional recursion, to prove it causes stack-overflow
             Log("Traversing the tree using conventional recurion, on a separate process");
@@ -32,11 +37,30 @@ namespace StrongRecursion.Test
             int exitCode = RunProcess(process, executablePath, depth);
             Log($"Exit code of ConventionalRecursion.exe: {exitCode}");
 
-            // Assert
+            // Assert 2
             Assert.NotEqual(0, exitCode); 
             Assert.Equal(-1073741571, exitCode); //Verifies stackoverflow happened. 
             // -1073741571 the signed integer representation of Microsoft's "stack overflow/stack exhaustion" error code 0xC00000FD.
 
+        }
+
+        private int TraverseByStrongRecurion(Node node)
+        {
+            int nodeCount = 0;
+            if (node == null)
+                return 0;
+            string data = node.Data;
+            // Log(data); Commented out to avoid flooding logs and console of Github CI
+            // Note that this project (ConventionalRecursion) is always built for "Release"
+            TraverseByStrongRecurion(node.Left);
+            TraverseByStrongRecurion(node.Right);
+
+            var builder = new RecursionBuilder();
+            
+            //builder.WithLimitingCondition(())
+
+
+            return nodeCount;
         }
 
         /// <summary>
