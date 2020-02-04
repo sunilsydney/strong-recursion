@@ -18,13 +18,19 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.0.100
-    - name: Build with dotnet - Main project
+    - name: Build StrongRecursion project
       working-directory: ./StrongRecursion
       run: |
         dotnet restore
         dotnet build --configuration Release
+      timeout-minutes: 10    
+    - name: Build ConventionalRecursion project
+      working-directory: ./ConventionalRecursion
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
       timeout-minutes: 10
-    - name: Build with dotnet - Test project
+    - name: Unit testing
       working-directory: ./StrongRecursion.Test
       run: |
         pwd
