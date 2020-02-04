@@ -2,6 +2,6 @@
 {
     public class DemoResult: Result
     {
-        public int Res { get; set; }
+        public int Res { get; set; } = 0;
     }
 }

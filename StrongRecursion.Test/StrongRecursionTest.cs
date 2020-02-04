@@ -9,7 +9,7 @@ namespace StrongRecursion.Test
         /// Proof of concept of StrongRecursion
         /// </summary>
         [Fact]
-        public void PoC()
+        public void StrongRecursion_POC_Test()
         {
             // Arrange
             int n = 5000;
