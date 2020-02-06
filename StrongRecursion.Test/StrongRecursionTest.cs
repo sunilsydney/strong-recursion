@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using StrongRecursion.Test.UserDefined;
 using Xunit;
 
 namespace StrongRecursion.Test
@@ -31,30 +32,30 @@ namespace StrongRecursion.Test
         private int StrongRecursion(int input)
         {
             var result = new RecursionBuilder()
-                .WithLimitingCondition((p) =>
+                .If((p) =>
                 {
                     // Custom predicate for limiting condition by user
                     var inputParams = (DemoParams)p;
                     return (inputParams.N == 1);
                 })
-                .WithLimitingLogic((p, r) =>
+                .Then((p, r) =>
                 {
                     // Custom logic by user
                     var prevResult = (DemoResult)r;
                     return new DemoResult() { Res = 1 + prevResult.Res };
                 })
-                .WithLogic((p, r) =>
+                .Else((p, r) =>
                 {
                     // Custom logic by user
                     var inputParams = (DemoParams)p;
-                    var prevResult = (DemoResult)r;
+                    var prevResult = (DemoResult)r ?? new DemoResult();
                     return new StackFrame()
                     {
                         Params = new DemoParams() { N = inputParams.N - 1 },
                         Result = new DemoResult() { Res = inputParams.N + prevResult.Res }
                     };
                 })
-                .WithInitialResult(new DemoResult() { Res = 0 })
+                //.WithInitialResult(new DemoResult() { Res = 0 })
                 .Run(new DemoParams() { N = input });
 
             return ((DemoResult)result).Res;

@@ -1,4 +1,4 @@
-﻿namespace StrongRecursion.Test
+﻿namespace StrongRecursion.Test.UserDefined
 {
     public class DemoParams : Params
     {

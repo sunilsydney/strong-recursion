@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Xunit;
 using StrongRecursion.Generic;
+using StrongRecursion.Test.UserDefined;
 
 namespace StrongRecursion.Test
 {

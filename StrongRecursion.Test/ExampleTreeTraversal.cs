@@ -1,5 +1,6 @@
 ﻿using System;
 using StrongRecursion.Test.Tree;
+using StrongRecursion.Test.UserDefined;
 using Xunit;
 using System.Diagnostics;
 
@@ -25,10 +26,12 @@ namespace StrongRecursion.Test
             var tree = TreeHelper.CreateTree(depth);
 
             // Action 1 : Using StrongRecurion to prove it doesn't cause stack-overflow
-            // int nodeCount = TraverseByStrongRecurion(tree.RootNode);
+            int nodeCount = TraverseByStrongRecurion(tree.RootNode);
 
             // Assert 1
             Assert.True(true); // Yes, if control reaches this point, stack overflow did not happen
+            
+            // TODO ** Support returning of multiple stackframes from "Then" and uncomment the line below
             // Assert.Equal(((depth * 2) + 1), nodeCount); // This equation is very specific to the structure of the sample tree
 
             // Action 2 : Using conventional recursion, to prove it causes stack-overflow
@@ -47,19 +50,36 @@ namespace StrongRecursion.Test
         private int TraverseByStrongRecurion(Node node)
         {
             int nodeCount = 0;
-            if (node == null)
-                return 0;
-            string data = node.Data;
-            // Log(data); Commented out to avoid flooding logs and console of Github CI
-            // Note that this project (ConventionalRecursion) is always built for "Release"
-            TraverseByStrongRecurion(node.Left);
-            TraverseByStrongRecurion(node.Right);
+            //if (node == null)
+            //    return 0;
+            //string data = node.Data;
+            //TraverseByStrongRecurion(node.Left);
+            //TraverseByStrongRecurion(node.Right);
 
-            var builder = new RecursionBuilder();
-            
-            //builder.WithLimitingCondition(())
+            var builder = new RecursionBuilder()
+                .If((p) =>
+                {
+                    var inputParam = (TreeParams)p;
+                    return (inputParam.Node == null);
+                })
+                .Then((p, r) =>
+                {
+                    return new TreeResult();
+                })
+                .Else((p, r) =>
+                {
+                    var inputParam = (TreeParams)p;
+                    var prevResult = (Result)r;
 
+                    nodeCount++;
+                    return new StackFrame()
+                    {
+                        Params = new TreeParams { Node = inputParam.Node.Left }
+                    };
+                });
 
+            var result = builder.Run(new TreeParams { Node = node });
+         
             return nodeCount;
         }
 

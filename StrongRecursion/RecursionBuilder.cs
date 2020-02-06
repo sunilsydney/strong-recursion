@@ -8,35 +8,81 @@ namespace StrongRecursion
         public RecursionBuilder()
         { }
 
-        Func<Params, bool> _limitingCondition;
-        Func<Params, Result, Result> _limitingLogic;
-        Func<Params, Result, StackFrame> _logic;
-        Result _initialResult = null;
+        private Func<Params, bool> _if = null;
+        private Func<Params, Result, Result> _then = null;
+        private List<Func<Params, bool>> _elseIfList = new List<Func<Params, bool>>();
+        // TODO support returning of multiple StackFrames. 
+        private List<Func<Params, Result, StackFrame>> _thenList = new List<Func<Params, Result, StackFrame>>();
+        // TODO support returning of multiple StackFrames. 
+        private Func<Params, Result, StackFrame> _else = null;
+        // Result _initialResult = null;
 
 
-        public RecursionBuilder WithLimitingCondition(Func<Params, bool> func)
+        /// <summary>
+        /// Limiting condition of the recursion
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public RecursionBuilder If(Func<Params, bool> func)
         {
-            _limitingCondition = func;
+            ValidateState(nameof(If));
+            _if = func;
             return this;
         }
 
-        public RecursionBuilder WithLimitingLogic(Func<Params, Result, Result> func)
+        /// <summary>
+        /// Exit logic of the recursion
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public RecursionBuilder Then(Func<Params, Result, Result> func)
         {
-            _limitingLogic = func;
+            ValidateState(); // Special case
+            _then = func;
+            return this;
+        }
+        
+        /// <summary>
+        /// When evaluated to true, leads to a recursive action
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public RecursionBuilder ElseIf(Func<Params, bool> func)
+        {
+            _elseIfList.Add(func); // Will match with elemet of _thenList at same index
             return this;
         }
 
-        public RecursionBuilder WithLogic(Func<Params, Result, StackFrame> func)
+        /// <summary>
+        /// A recursive action performed when the previous "ElseIf" evaluated to true
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public RecursionBuilder Then(Func<Params, Result, StackFrame> func)
         {
-            _logic = func;
+            ValidateState(nameof(Then));
+            _thenList.Add(func); // Will match with elemet of _elseIfList at same index
             return this;
         }
 
-        public RecursionBuilder WithInitialResult(Result result)
+        /// <summary>
+        /// Optional action to perform if no condition evaluated to true
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public RecursionBuilder Else(Func<Params, Result, StackFrame> func)
         {
-            _initialResult = result;
+            ValidateState(nameof(Else));
+            _else = func;
             return this;
         }
+
+
+        //public RecursionBuilder WithInitialResult(Result result)
+        //{
+        //    _initialResult = result;
+        //    return this;
+        //}
 
         public Result Run(Params prms)
         {
@@ -46,36 +92,89 @@ namespace StrongRecursion
             // Initial frame
             stack.Push(new StackFrame()
             {
-                Params = prms,
-                Result = _initialResult
+                Params = prms
             });
 
             Result finalResult = null;
+            bool elseIfTriggered = false;
 
             while (stack.Count > 0)
             {
                 var frame = stack.Pop();
+                elseIfTriggered = false;
 
                 // Limiting condition
-                if(_limitingCondition(frame.Params))
+                if (_if(frame.Params))
                 {
-                    //int sum = frame.Result.res + frame.Params.n;
-                    //finalResult = new Result() { res = sum };
-                    finalResult = _limitingLogic(frame.Params, frame.Result);
+                    if(_then == null)
+                    {
+                        finalResult = frame.Result; //TODO User did not specify limiting logic
+                    }
+                    else
+                    {
+                        finalResult = _then(frame.Params, frame.Result);
+                    }
                 }
                 else
-                {
-                    //var newFrame = new StackFrame()
-                    //{
-                    //    Params = new Params() { n = frame.Params.n - 1 },
-                    //    Result = new Result() { res = frame.Result.res + frame.Params.n }
-                    //};
+                {                    
+                    for (int p = 0; p < _elseIfList.Count; p++)
+                    {
+                        var predicate = _elseIfList[p];
+                        if (predicate(frame.Params))
+                        {
+                            var action = _thenList[p];
+                            var newFrame = action(frame.Params, frame.Result);
+                            stack.Push(newFrame);
+                            elseIfTriggered = true;
 
-                    var newFrame = _logic(frame.Params, frame.Result);
-                    stack.Push(newFrame);
+                            break; // Important
+                        }
+                    }
+
+                    if (!elseIfTriggered && _else != null)
+                    {
+                        var newFrame = _else(frame.Params, frame.Result);
+                        stack.Push(newFrame);
+                    }                    
                 }
             }
             return finalResult;
+        }
+
+        private void ValidateState(string methodName)
+        {
+            // TODO
+            // Validate order, sequence and chaining, and Throw custome exception if there are issues
+            /*
+            if(a == 1)
+            {
+            }
+            Then
+            {
+            }
+            ElseIf(a == 2)
+            {
+            }
+            Then
+            {
+            }
+            ElseIf(a == 3)
+            {
+            }
+            Then
+            {
+            }
+            Else
+            {
+            }
+
+            */
+            // throw new NotImplementedException();
+        }
+
+        private void ValidateState()
+        {
+            // TODO 
         }
     }
 }
