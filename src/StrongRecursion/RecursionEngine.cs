@@ -12,6 +12,7 @@ namespace StrongRecursion
 
     {
         internal Func<TParams, bool> If = null;
+
         // Then0
         internal Func<TParams, TResult, TResult> Then = null;
 
@@ -22,10 +23,9 @@ namespace StrongRecursion
             = new List<ThenList<TParams, TResult>>();
 
         // List of Then2
-        internal List<Func<TParams, TResult, StackFrame<TParams, TResult>>> ElseList
-            = new List<Func<TParams, TResult, StackFrame<TParams, TResult>>>();
+        internal ThenList<TParams, TResult> ElseList
+            = new ThenList<TParams, TResult>();
        
-
         /// <summary>
         /// Main entry point
         /// </summary>
@@ -68,10 +68,11 @@ namespace StrongRecursion
                         {
                             elseIfTriggered = true;
                             var actions = ThenListList[p];
-                            foreach(var action in actions)
+
+                            for (int i = actions.Count - 1; i >= 0; i--)
                             {
-                                // TODO
-                                // might need in-memory links for chaining results in right sequence
+                                // TODO : Might need in-memory links for chaining results in right sequence
+                                var action = actions[i];
                                 var newFrame = action(frame.Params, frame.Result);
                                 stack.Push(newFrame);
                             }
@@ -81,8 +82,10 @@ namespace StrongRecursion
 
                     if (!elseIfTriggered && ElseList?.Count> 0)
                     {
-                        foreach (var action in ElseList)
+                        // Grab in reverse order
+                        for (int i = ElseList.Count - 1; i >= 0; i--)
                         {
+                            var action = ElseList[i];
                             var newFrame = action(frame.Params, frame.Result);
                             stack.Push(newFrame);
                         }

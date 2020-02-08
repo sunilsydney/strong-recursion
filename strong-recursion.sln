@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StrongRecursion.Test", "tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "lib\Common\Common.csproj", "{954757FC-47A0-4BDF-926C-66AD25201521}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "samples\Samples\Samples.csproj", "{12A6D516-8011-42D6-8578-DC7155FC2374}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{954757FC-47A0-4BDF-926C-66AD25201521}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{954757FC-47A0-4BDF-926C-66AD25201521}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{954757FC-47A0-4BDF-926C-66AD25201521}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12A6D516-8011-42D6-8578-DC7155FC2374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12A6D516-8011-42D6-8578-DC7155FC2374}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12A6D516-8011-42D6-8578-DC7155FC2374}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12A6D516-8011-42D6-8578-DC7155FC2374}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

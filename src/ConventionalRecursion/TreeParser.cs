@@ -13,18 +13,25 @@ namespace ConventionalRecursion
         public void TraverseByConventionalRecurion(Node node)
         {
             if (node == null)
+            {
                 return;
-            string data = node.Data;
-            // Log(data); Commented out to avoid flooding logs and console of Github CI
-            // Note that this project (ConventionalRecursion) is always built for "Release"
-            TraverseByConventionalRecurion(node.Left);
-            TraverseByConventionalRecurion(node.Right);
+            }
+            else
+            {
+                string data = node.Data;
+                Log(data);
+                // Note that console is redirected to ExampleTreeTraversal.TreeTraversal_Test
+                // Note that this project (ConventionalRecursion) is always built for "Release"
+
+                TraverseByConventionalRecurion(node.Left);
+                TraverseByConventionalRecurion(node.Right);
+            }
         }
 
         private void Log(string v)
         {
             Console.WriteLine(v);
-            System.Diagnostics.Debug.WriteLine(v);
+            // System.Diagnostics.Debug.WriteLine(v);
         }
     }
 }

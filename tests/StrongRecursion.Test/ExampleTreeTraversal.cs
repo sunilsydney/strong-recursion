@@ -3,6 +3,8 @@ using Common.Tree;
 using StrongRecursion.Test.UserDefined;
 using Xunit;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace StrongRecursion.Test
 {
@@ -24,6 +26,7 @@ namespace StrongRecursion.Test
             // Arrange
             int depth = 50000;
             var tree = TreeHelper.CreateTree(depth);
+            // System.Diagnostics.Debug.AutoFlush = true;
 
             // Action 1 : Using StrongRecurion to prove it doesn't cause stack-overflow
             int nodeCount = TraverseByStrongRecurion(tree.RootNode);
@@ -91,6 +94,40 @@ namespace StrongRecursion.Test
             return nodeCount;
         }
 
+        private string GetNodesByStrongRecurion(Node node)
+        {
+            StringBuilder sbuilder = new StringBuilder();
+
+            var result = new RecursionBuilder<TreeParams, TreeResult>()
+                .If((p) =>
+                {
+                    return (p.Node == null);
+                })
+                .Then((p, r) =>
+                {
+                    return new TreeResult();
+                })
+                .Else((p, r) =>
+                {
+                    sbuilder.Append(p.Node.Data + "|");
+                    return new StackFrame<TreeParams, TreeResult>()
+                    {
+                        Params = new TreeParams { Node = p.Node.Left }
+                    };
+                })
+                .Then((p, r) =>
+                {
+                    return new StackFrame<TreeParams, TreeResult>()
+                    {
+                        Params = new TreeParams { Node = p.Node.Right }
+                    };
+                })
+                .Build()
+                .Run(new TreeParams { Node = node });
+
+            return sbuilder.ToString();
+        }
+
         /// <summary>
         /// Demonstrates that convention recursion works for a small depth
         /// </summary>
@@ -109,6 +146,25 @@ namespace StrongRecursion.Test
             Assert.Equal(0, exitCode);
         }
 
+        /// <summary>
+        /// Verify the correctness of DFS traversal using strong recursion
+        /// </summary>
+        [Fact]
+        public void StrongRecursion_Traverses_CorrectOrder_Test()
+        {
+            // Arrange
+            int depth = 5;
+            var tree = TreeHelper.CreateTree(depth);
+            var expected = $"RootNode|Left node at depth 1|Left node at depth 2|Left node at depth 3|" +
+                $"Left node at depth 4|Left node at depth 5|Right node at depth 5|Right node at depth 4|" +
+                $"Right node at depth 3|Right node at depth 2|Right node at depth 1|";
+
+            // Action
+            string nodes = GetNodesByStrongRecurion(tree.RootNode);
+
+            // Assert
+            Assert.Equal(expected, nodes);
+        }
         private int RunProcess(Process process, string executablePath, int depth)
         {
             try
@@ -154,6 +210,7 @@ namespace StrongRecursion.Test
         {
             Console.WriteLine(v);
             System.Diagnostics.Debug.WriteLine(v);
+            File.AppendAllText(@"c:\temp\recursion.txt", v + "\n");
         }
     }
 
