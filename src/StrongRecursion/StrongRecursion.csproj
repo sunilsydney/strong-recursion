@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>https://github.com/sunilsydney/strong-recursion
 Sunil Purushothaman</Description>
-    <Copyright>Sunil Purushothaman</Copyright>
+    <Copyright>Copyright (c) 2020 Sunil Purushothaman</Copyright>
   </PropertyGroup>
 
 </Project>

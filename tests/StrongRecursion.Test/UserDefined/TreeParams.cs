@@ -1,4 +1,4 @@
-﻿using StrongRecursion.Test.Tree;
+﻿using Common.Tree;
 
 namespace StrongRecursion.Test.UserDefined
 {

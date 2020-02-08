@@ -31,34 +31,33 @@ namespace StrongRecursion.Test
 
         private int StrongRecursion(int input)
         {
-            var result = new RecursionBuilder()
+            var builder = new RecursionBuilder<DemoParams, DemoResult>()
                 .If((p) =>
                 {
                     // Custom predicate for limiting condition by user
-                    var inputParams = (DemoParams)p;
-                    return (inputParams.N == 1);
+                    return (p.N == 1);
                 })
                 .Then((p, r) =>
                 {
                     // Custom logic by user
-                    var prevResult = (DemoResult)r;
-                    return new DemoResult() { Res = 1 + prevResult.Res };
+                    return new DemoResult() { Res = 1 + r.Res };
                 })
                 .Else((p, r) =>
                 {
                     // Custom logic by user
                     var inputParams = (DemoParams)p;
                     var prevResult = (DemoResult)r ?? new DemoResult();
-                    return new StackFrame()
+                    return new StackFrame<DemoParams, DemoResult>()
                     {
                         Params = new DemoParams() { N = inputParams.N - 1 },
                         Result = new DemoResult() { Res = inputParams.N + prevResult.Res }
                     };
-                })
-                //.WithInitialResult(new DemoResult() { Res = 0 })
-                .Run(new DemoParams() { N = input });
+                });
 
-            return ((DemoResult)result).Res;
+            var recursion = builder.Build();
+            var result = recursion.Run(new DemoParams() { N = input });
+
+            return result.Res;
         }
 
         /// <summary>
@@ -68,8 +67,8 @@ namespace StrongRecursion.Test
         /// <returns></returns>
         private int CoreLogic(int input)
         {
-            Stack<StackFrame> stack = new Stack<StackFrame>();
-            stack.Push(new StackFrame() 
+            Stack<StackFrame<DemoParams, DemoResult>> stack = new Stack<StackFrame<DemoParams, DemoResult>>();
+            stack.Push(new StackFrame<DemoParams, DemoResult>() 
             { 
                 Params = new DemoParams() { N = input },
                 Result = new DemoResult() { Res = 0 }
@@ -89,7 +88,7 @@ namespace StrongRecursion.Test
                 }
                 else
                 {
-                    var newFrame = new StackFrame() {
+                    var newFrame = new StackFrame<DemoParams, DemoResult>() {
                         Params = new DemoParams() { N = frameParams.N -1 },
                         Result = new DemoResult() { Res = frameResult.Res + frameParams.N }
                     };

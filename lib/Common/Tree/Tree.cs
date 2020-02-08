@@ -1,4 +1,4 @@
-﻿namespace StrongRecursion.Test.Tree
+﻿namespace Common.Tree
 {
     public class Tree
     {

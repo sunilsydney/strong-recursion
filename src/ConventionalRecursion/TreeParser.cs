@@ -1,5 +1,5 @@
 ﻿using System;
-using StrongRecursion.Test.Tree;
+using Common.Tree;
 
 namespace ConventionalRecursion
 {
