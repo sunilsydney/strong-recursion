@@ -205,12 +205,13 @@ namespace StrongRecursion.Test
 
             return process.ExitCode;
         }
-        
-        private void Log(string v)
+
+        [Conditional("DEBUG")]
+        private void Log(string message)
         {
-            Console.WriteLine(v);
-            System.Diagnostics.Debug.WriteLine(v);
-            File.AppendAllText(@"c:\temp\recursion.txt", v + "\n");
+            Console.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(message);
+            // File.AppendAllText(@"c:\temp\recursion.txt", message + "\n");
         }
     }
 

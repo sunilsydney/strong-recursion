@@ -37,7 +37,8 @@ namespace StrongRecursion
             // Initial frame
             stack.Push(new StackFrame<TParams, TResult>()
             {
-                Params = prms
+                Params = prms,
+                Result = new TResult()
             });
 
             TResult finalResult = null;
