@@ -9,7 +9,7 @@ namespace StrongRecursion.Test
     public class ExampleTreeTraversal
     {
         static string buildConf = "Release";
-        static string executablePath = @$"..\..\..\..\ConventionalRecursion\bin\{buildConf}\netcoreapp3.1\ConventionalRecursion.exe";
+        static string executablePath = @$"..\..\..\..\..\src\ConventionalRecursion\bin\{buildConf}\netcoreapp3.1\ConventionalRecursion.exe";
 
 
         /// <summary>
@@ -52,6 +52,7 @@ namespace StrongRecursion.Test
             if (node == null)
                 return;
             string data = node.Data;
+            Console.WriteLine(data);
             TraverseByStrongRecurion(node.Left);
             TraverseByStrongRecurion(node.Right);
             */
@@ -69,7 +70,9 @@ namespace StrongRecursion.Test
                 })
                 .Else((p, r) =>
                 {
+                    Log(p.Node.Data);
                     nodeCount++;
+
                     return new StackFrame<TreeParams, TreeResult>()
                     {
                         Params = new TreeParams { Node = p.Node.Left }
@@ -77,7 +80,6 @@ namespace StrongRecursion.Test
                 })
                 .Then((p, r) =>
                 {
-                    nodeCount++;
                     return new StackFrame<TreeParams, TreeResult>()
                     {
                         Params = new TreeParams { Node = p.Node.Right }

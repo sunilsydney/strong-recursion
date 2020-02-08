@@ -17,9 +17,9 @@ namespace StrongRecursion
 
         internal List<Func<TParams, bool>> ElseIfList = new List<Func<TParams, bool>>();
 
-        // List of Then1 
-        internal List<Func<TParams, TResult, StackFrame<TParams, TResult>>> ThenList 
-            = new List<Func<TParams, TResult, StackFrame<TParams, TResult>>>();
+        // List of List of Then1 
+        internal List<ThenList<TParams, TResult>> ThenListList
+            = new List<ThenList<TParams, TResult>>();
 
         // List of Then2
         internal List<Func<TParams, TResult, StackFrame<TParams, TResult>>> ElseList
@@ -41,19 +41,18 @@ namespace StrongRecursion
             });
 
             TResult finalResult = null;
-            bool elseIfTriggered = false;
 
             while (stack.Count > 0)
             {
                 var frame = stack.Pop();
-                elseIfTriggered = false;
+                bool elseIfTriggered = false;
 
-                // Limiting condition
+                // Base case aka Limiting condition
                 if (If(frame.Params))
                 {
                     if (Then == null)
                     {
-                        finalResult = frame.Result; //TODO User did not specify limiting logic
+                        finalResult = new TResult(); // User did not specify, returning default
                     }
                     else
                     {
@@ -65,22 +64,29 @@ namespace StrongRecursion
                     for (int p = 0; p < ElseIfList.Count; p++)
                     {
                         var predicate = ElseIfList[p];
-                        if (predicate(frame.Params))
+                        if (predicate(frame.Params)) // Future: Can optimize in chaining scenario
                         {
-                            var action = ThenList[p];
-                            var newFrame = action(frame.Params, frame.Result);
-                            stack.Push(newFrame);
                             elseIfTriggered = true;
-
+                            var actions = ThenListList[p];
+                            foreach(var action in actions)
+                            {
+                                // TODO
+                                // might need in-memory links for chaining results in right sequence
+                                var newFrame = action(frame.Params, frame.Result);
+                                stack.Push(newFrame);
+                            }
                             break; // Important
                         }
                     }
 
-                    //if (!elseIfTriggered && _else != null)
-                    //{
-                    //    var newFrame = _else(frame.Params, frame.Result);
-                    //    stack.Push(newFrame);
-                    //}
+                    if (!elseIfTriggered && ElseList?.Count> 0)
+                    {
+                        foreach (var action in ElseList)
+                        {
+                            var newFrame = action(frame.Params, frame.Result);
+                            stack.Push(newFrame);
+                        }
+                    }
                 }
             }
             return finalResult;

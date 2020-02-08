@@ -10,10 +10,10 @@ namespace StrongRecursion
         where TResult : Result, new()
     {
         private FiniteStateMachine _stateMachine = new FiniteStateMachine();
-        private RecursionEngine<TParams, TResult> _recursion;
+        private RecursionEngine<TParams, TResult> _engine;
         public RecursionBuilder()
         {
-            _recursion = new RecursionEngine<TParams, TResult>();
+            _engine = new RecursionEngine<TParams, TResult>();
         }
 
 
@@ -25,7 +25,7 @@ namespace StrongRecursion
         public RecursionBuilder<TParams, TResult> If(Func<TParams, bool> func)
         {
             _stateMachine.On(Transitions.If);
-            _recursion.If = func;
+            _engine.If = func;
             return this;
         }
 
@@ -37,7 +37,7 @@ namespace StrongRecursion
         public RecursionBuilder<TParams, TResult> Then(Func<TParams, TResult, TResult> func)
         {
             _stateMachine.On(Transitions.Then0);
-            _recursion.Then = func;
+            _engine.Then = func;
             return this;
         }
         
@@ -49,7 +49,7 @@ namespace StrongRecursion
         public RecursionBuilder<TParams, TResult> ElseIf(Func<TParams, bool> func)
         {
             _stateMachine.On(Transitions.ElseIf);
-            _recursion.ElseIfList.Add(func); // Will match with elemet of _thenList at same index
+            _engine.ElseIfList.Add(func); // Will match with elemet of _thenList at same index
             return this;
         }
 
@@ -61,18 +61,30 @@ namespace StrongRecursion
         /// <param name="func"></param>
         /// <returns></returns>
         public RecursionBuilder<TParams, TResult> Then(Func<TParams, TResult, StackFrame<TParams, TResult>> func)
-        {
-            //_stateMachine.On(Transitions.Then1);
-            if(_stateMachine.State == States.ElseIf)
+        {            
+            if (_stateMachine.State == States.ElseIf)
             {
                 _stateMachine.On(Transitions.Then1);
-                _recursion.ThenList.Add(func); // Will match with elemet of _elseIfList at same index                   
+                // Will match with elemet of _elseIfList at same index                   
+                _engine.ThenListList.Add(new ThenList<TParams, TResult>() { func});
             }
-            else
+            else if (_stateMachine.State == States.Then1)
             {
-                _recursion.ElseIfList.Add(_recursion.ElseIfList.Last()); // Duplicate the condition
-                _recursion.ThenList.Add(func); // Will match with elemet of _elseIfList at same index
-            }            
+                _stateMachine.On(Transitions.Then1);
+                // Will match with elemet of _elseIfList at same index
+                _engine.ThenListList.Last().Add(func);
+            }
+            else if (_stateMachine.State == States.Else)
+            {
+                _stateMachine.On(Transitions.Then2);
+                _engine.ElseList.Add(func);
+            }
+            else if (_stateMachine.State == States.Then2)
+            {
+                _stateMachine.On(Transitions.Then2);
+                _engine.ElseList.Add(func);
+            }
+            
             return this;
         }
 
@@ -84,19 +96,20 @@ namespace StrongRecursion
         public RecursionBuilder<TParams, TResult> Else(Func<TParams, TResult, StackFrame<TParams, TResult>> func)
         {
             _stateMachine.On(Transitions.Else);
-           // TODO  _recursion._else = func;
+            _engine.ElseList.Add(func);
             return this;
         }
 
         public IRecursionEngine<TParams, TResult> Build()
         {
+            _stateMachine.On(Transitions.Finish);
             if(_stateMachine.State == States.Empty)
             {
                 throw new InvalidOperationException("Recursion builder not initialized, please check your fluent expression");
             }
             if(_stateMachine.State == States.Ready)
             {
-                return _recursion;
+                return _engine;
             }
             throw new InvalidOperationException("Recursion builder is in error state, please check your fluent expression");
         }
