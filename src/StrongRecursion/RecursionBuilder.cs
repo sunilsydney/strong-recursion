@@ -10,10 +10,10 @@ namespace StrongRecursion
         where TResult : Result, new()
     {
         private FiniteStateMachine _stateMachine = new FiniteStateMachine();
-        private RecursionEngine<TParams, TResult> _engine;
+        private RecursionEngineLight<TParams, TResult> _engine;
         public RecursionBuilder()
         {
-            _engine = new RecursionEngine<TParams, TResult>();
+            _engine = new RecursionEngineLight<TParams, TResult>();
         }
 
 
@@ -100,6 +100,19 @@ namespace StrongRecursion
             return this;
         }
 
+        /// <summary>
+        /// Returns an IRecursionEngine
+        /// </summary>
+        /// <param name="lightMode">LightMode is in Beta stage</param>
+        /// <returns></returns>
+        public IRecursionEngine<TParams, TResult> Build(bool lightMode = false)
+        {
+            throw new NotImplementedException("Wire this up to RecursionBuilderLight");
+        }
+        /// <summary>
+        /// Returns an IRecursionEngine
+        /// </summary>
+        /// <returns></returns>
         public IRecursionEngine<TParams, TResult> Build()
         {
             _stateMachine.On(Transitions.Finish);

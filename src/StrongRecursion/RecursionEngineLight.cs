@@ -5,8 +5,9 @@ namespace StrongRecursion
 {
     /// <summary>
     /// Internal class, not visible to SDK users.
+    /// LightMode is in Beta stage.
     /// </summary>
-    internal class RecursionEngine<TParams, TResult> : IRecursionEngine<TParams, TResult>
+    internal class RecursionEngineLight<TParams, TResult> : IRecursionEngine<TParams, TResult>
         where TParams : Params
         where TResult : Result, new()
 
@@ -27,7 +28,7 @@ namespace StrongRecursion
             = new ThenList<TParams, TResult>();
        
         /// <summary>
-        /// Main entry point. TODO implement return value and latest unwinding logic here
+        /// Main entry point
         /// </summary>
         /// <param name="prms"></param>
         /// <returns></returns>
