@@ -21,7 +21,7 @@ namespace StrongRecursion.Test
             Assert.Equal(expected, actual);
 
             // PoC of the strong recursion idea that does not use program's call stack for recursion
-            int actual1 = CoreLogic(n);
+            int actual1 = CoreLogic_LiteMode(n);
             Assert.Equal(expected, actual1);
 
             // PoC of RecursionBuilder
@@ -61,12 +61,12 @@ namespace StrongRecursion.Test
         }
 
         /// <summary>
-        /// Demostrates the core logic of strong-recursion
-        /// Consider referencing one frame from another to sort of chain the calculation?
+        /// Demostrates the core logic of strong-recursion Lite mode.
+        /// Lite mode uses less memory and does not support returning a value
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private int CoreLogic(int input)
+        private int CoreLogic_LiteMode(int input)
         {
             Stack<StackFrame<DemoParams, DemoResult>> stack = new Stack<StackFrame<DemoParams, DemoResult>>();
             stack.Push(new StackFrame<DemoParams, DemoResult>()
@@ -100,7 +100,8 @@ namespace StrongRecursion.Test
         }
 
         /// <summary>
-        /// Demonstrates return values, solving factorial problem as an example
+        /// Demonstrates strong recursion with return values, 
+        /// solving factorial problem as an example
         /// </summary>
         /// <returns></returns>
         [Theory]
@@ -125,23 +126,17 @@ namespace StrongRecursion.Test
 
                 if(frame.Result == null) // Winding Up
                 {
-                    var inParams = (DemoParams)frame.Params;
-                    //var inResult = (DemoResult)frame.Result; // Will be null
-                    if (inParams.N == 0 )
-                    {
-                        var newFrame = new StackFrame<DemoParams, DemoResult>()
-                        {
-                            Params = null,
-                            Result = new DemoResult() { Res = 1 }
-                        };
-                        stack.Pop(); // Important
-                        stack.Push(newFrame);
+                    if (frame.Params.N == 0 )
+                    {                        
+                        // Or pop and push a new frame for RecursionEngine implementation
+                        var topFrame = stack.Peek();                     
+                        topFrame.Result = new DemoResult() { Res = 1 };
                     }
                     else
                     {
                         var newFrame = new StackFrame<DemoParams, DemoResult>()
                         {
-                            Params = new DemoParams() { N = inParams.N - 1 },
+                            Params = new DemoParams() { N = frame.Params.N - 1 },
                             Result = null
                         };
                         stack.Push(newFrame);
@@ -154,17 +149,10 @@ namespace StrongRecursion.Test
                     {
                         var topFrame = stack.Peek();
 
-                        if(poppedFrame.Params == null) // poppedFrame came from Base case
+                        topFrame.Result = new DemoResult
                         {
-                            topFrame.Result = poppedFrame.Result; // Supply the result backwards 
-                        }
-                        else
-                        {
-                            topFrame.Result = new DemoResult
-                            {
-                                Res = topFrame.Params.N * poppedFrame.Result.Res
-                            };
-                        }
+                            Res = topFrame.Params.N * poppedFrame.Result.Res
+                        };
                     }
                 }
             }
@@ -175,6 +163,11 @@ namespace StrongRecursion.Test
             return poppedFrame.Result.Res;
         }
 
+        /// <summary>
+        /// Factorial using conventional call-stack based recursion
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
         private int Factorial(int n)
         {
             if (n == 0 || n == 1)
@@ -183,10 +176,14 @@ namespace StrongRecursion.Test
                 return n * Factorial(n - 1);
         }
 
+        /// <summary>
+        /// Returns the sum of all positive integers up to n including n
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
         private int Sum(int n)
         {
-            // sum = 1 + 2 + 3 + ..... + n
-            // Limiting condition
+            // Base case aka Limiting condition
             if( n == 1)
             {
                 return 1;
@@ -194,6 +191,5 @@ namespace StrongRecursion.Test
             return n + Sum(n - 1);
         }
     }
-
     
 }

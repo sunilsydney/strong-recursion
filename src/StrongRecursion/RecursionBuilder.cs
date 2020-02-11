@@ -10,10 +10,10 @@ namespace StrongRecursion
         where TResult : Result, new()
     {
         private FiniteStateMachine _stateMachine = new FiniteStateMachine();
-        private RecursionEngineLight<TParams, TResult> _engine;
+        private RecursionEngine<TParams, TResult> _engine;
         public RecursionBuilder()
         {
-            _engine = new RecursionEngineLight<TParams, TResult>();
+            _engine = new RecursionEngine<TParams, TResult>();
         }
 
 
@@ -100,15 +100,18 @@ namespace StrongRecursion
             return this;
         }
 
-        /// <summary>
-        /// Returns an IRecursionEngine
-        /// </summary>
-        /// <param name="lightMode">LightMode is in Beta stage</param>
-        /// <returns></returns>
-        public IRecursionEngine<TParams, TResult> Build(bool lightMode = false)
+        private void ValidateState()
         {
-            throw new NotImplementedException("Wire this up to RecursionBuilderLight");
+            if (_stateMachine.State == States.Empty)
+            {
+                throw new InvalidOperationException("Recursion builder not initialized, please check your fluent expression");
+            }
+            if (_stateMachine.State != States.Ready)
+            {
+                throw new InvalidOperationException("Recursion builder is in error state, please check your fluent expression");
+            }
         }
+
         /// <summary>
         /// Returns an IRecursionEngine
         /// </summary>
@@ -116,16 +119,8 @@ namespace StrongRecursion
         public IRecursionEngine<TParams, TResult> Build()
         {
             _stateMachine.On(Transitions.Finish);
-            if(_stateMachine.State == States.Empty)
-            {
-                throw new InvalidOperationException("Recursion builder not initialized, please check your fluent expression");
-            }
-            if(_stateMachine.State == States.Ready)
-            {
-                return _engine;
-            }
-            throw new InvalidOperationException("Recursion builder is in error state, please check your fluent expression");
+            ValidateState();
+            return _engine;         
         }
-        
     }
 }
