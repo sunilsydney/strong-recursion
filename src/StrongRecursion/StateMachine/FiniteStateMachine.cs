@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace StrongRecursion.StateMachine
 {
@@ -25,7 +23,7 @@ namespace StrongRecursion.StateMachine
 {(int)States.Error, (int)States.Error, (int)States.Error, (int)States.Error, (int)States.Error, (int)States.Then2, (int)States.Ready},
 {(int)States.Error, (int)States.Error, (int)States.Error, (int)States.Error, (int)States.Error, (int)States.Error, (int)States.Error},
 {(int)States.Error, (int)States.Error, (int)States.Error, (int)States.Error, (int)States.Error, (int)States.Error, (int)States.Ready}
-            };
+            }; 
         }
 
         public States On(Transitions transition)

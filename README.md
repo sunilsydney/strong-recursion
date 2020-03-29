@@ -4,7 +4,14 @@ StrongRecursion is a library that allows developers to express recursive logic i
 
 Try the samples in samples folder to see this in action.
 
+## Recursion Builder
+![Image of Statemachine diagram](https://github.com/sunilsydney/strong-recursion/blob/master/RecursionBuilder.jpg)
+
 ## Fluent Syntax
-If you want to embed images, this is how you do it:
+State machine used by Recursion Builder
+
+![Image of Statemachine diagram](https://github.com/sunilsydney/strong-recursion/blob/master/State%20machine%20diagram.jpg)
+
+## State machine table
 
 ![Image of Statemachine diagram](https://github.com/sunilsydney/strong-recursion/blob/master/State%20machine%20table.jpg)

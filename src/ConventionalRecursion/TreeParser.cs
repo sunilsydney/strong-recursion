@@ -20,14 +20,13 @@ namespace ConventionalRecursion
             {
                 string data = node.Data;
                 Log(data);
-                // Note that console is redirected to ExampleTreeTraversal.TreeTraversal_Test
-                // Note that this project (ConventionalRecursion) is always built for "Release"
-
                 TraverseByConventionalRecurion(node.Left);
                 TraverseByConventionalRecurion(node.Right);
             }
         }
 
+        // Note that console is redirected to ExampleTreeTraversal.TreeTraversal_Test
+        // Note that this project (ConventionalRecursion) is always built for "Release"
         private void Log(string v)
         {
             Console.WriteLine(v);

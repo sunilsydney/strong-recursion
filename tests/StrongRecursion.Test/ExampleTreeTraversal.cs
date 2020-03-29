@@ -3,7 +3,6 @@ using Common.Tree;
 using StrongRecursion.Test.UserDefined;
 using Xunit;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
 
 namespace StrongRecursion.Test
@@ -32,7 +31,7 @@ namespace StrongRecursion.Test
             int nodeCount = TraverseByStrongRecurion(tree.RootNode);
 
             // Assert 1
-            Assert.True(true); // Yes, if control reaches this point, stack overflow did not happen
+            Assert.True(true); // if control reaches this point, stack overflow did not happen
             
             Assert.Equal(((depth * 2) + 1), nodeCount); // This equation is very specific to the structure of the sample tree
 
@@ -94,40 +93,6 @@ namespace StrongRecursion.Test
             return nodeCount;
         }
 
-        private string GetNodesByStrongRecurion(Node node)
-        {
-            StringBuilder sbuilder = new StringBuilder();
-
-            var result = new RecursionBuilder<TreeParams, TreeResult>()
-                .If((p) =>
-                {
-                    return (p.Node == null);
-                })
-                .Then((p, r) =>
-                {
-                    return new TreeResult();
-                })
-                .Else((p, r) =>
-                {
-                    sbuilder.Append(p.Node.Data + "|");
-                    return new StackFrame<TreeParams, TreeResult>()
-                    {
-                        Params = new TreeParams { Node = p.Node.Left }
-                    };
-                })
-                .Then((p, r) =>
-                {
-                    return new StackFrame<TreeParams, TreeResult>()
-                    {
-                        Params = new TreeParams { Node = p.Node.Right }
-                    };
-                })
-                .Build()
-                .Run(new TreeParams { Node = node });
-
-            return sbuilder.ToString();
-        }
-
         /// <summary>
         /// Demonstrates that convention recursion works for a small depth
         /// </summary>
@@ -165,6 +130,41 @@ namespace StrongRecursion.Test
             // Assert
             Assert.Equal(expected, nodes);
         }
+
+        private string GetNodesByStrongRecurion(Node node)
+        {
+            StringBuilder sbuilder = new StringBuilder();
+
+            var result = new RecursionBuilder<TreeParams, TreeResult>()
+                .If((p) =>
+                {
+                    return (p.Node == null);
+                })                
+                .Then((p, r) =>
+                {
+                    return new TreeResult();
+                })               
+                .Else((p, r) =>
+                {
+                    sbuilder.Append(p.Node.Data + "|");
+                    return new StackFrame<TreeParams, TreeResult>()
+                    {
+                        Params = new TreeParams { Node = p.Node.Left }
+                    };
+                })
+                .Then((p, r) =>
+                {
+                    return new StackFrame<TreeParams, TreeResult>()
+                    {
+                        Params = new TreeParams { Node = p.Node.Right }
+                    };
+                })
+                .Build()
+                .Run(new TreeParams { Node = node });
+
+            return sbuilder.ToString();
+        }
+
         private int RunProcess(Process process, string executablePath, int depth)
         {
             try
