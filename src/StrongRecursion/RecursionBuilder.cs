@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace StrongRecursion
 {
-    public class RecursionBuilder<TParams, TResult> : IRecursionBuilder<TParams, TResult>
+    public class RecursionBuilder<TParams, TResult> //: IRecursionBuilder<TParams, TResult>
         where TParams : Params
         where TResult : Result, new()
     {
@@ -33,7 +33,7 @@ namespace StrongRecursion
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        public RecursionBuilder<TParams, TResult> Then(Func<TParams, TResult, TResult> func)
+        public RecursionBuilder<TParams, TResult> Then(Func<TParams, TResult> func)
         {
             _stateMachine.On(Transitions.Then0);
             _engine.Then = func;
@@ -59,30 +59,30 @@ namespace StrongRecursion
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        public RecursionBuilder<TParams, TResult> Then(Func<TParams, TResult, StackFrame<TParams, TResult>> func)
+        public RecursionBuilder<TParams, TResult> Then1(Func<TParams, TResult, TResult> func)
         {            
-            if (_stateMachine.State == States.ElseIf)
-            {
-                _stateMachine.On(Transitions.Then1);
-                // Will match with elemet of _elseIfList at same index                   
-                _engine.ThenListList.Add(new ThenList<TParams, TResult>() { func});
-            }
-            else if (_stateMachine.State == States.Then1)
-            {
-                _stateMachine.On(Transitions.Then1);
-                // Will match with elemet of _elseIfList at same index
-                _engine.ThenListList.Last().Add(func);
-            }
-            else if (_stateMachine.State == States.Else)
-            {
-                _stateMachine.On(Transitions.Then2);
-                _engine.ElseList.Add(func);
-            }
-            else if (_stateMachine.State == States.Then2)
-            {
-                _stateMachine.On(Transitions.Then2);
-                _engine.ElseList.Add(func);
-            }
+            //if (_stateMachine.State == States.ElseIf)
+            //{
+            //    _stateMachine.On(Transitions.Then1);
+            //    // Will match with elemet of _elseIfList at same index                   
+            //    _engine.ThenListList.Add(new ThenList<TParams, TResult>() { func});
+            //}
+            //else if (_stateMachine.State == States.Then1)
+            //{
+            //    _stateMachine.On(Transitions.Then1);
+            //    // Will match with elemet of _elseIfList at same index
+            //    _engine.ThenListList.Last().Add(func);
+            //}
+            //else if (_stateMachine.State == States.Else)
+            //{
+            //    _stateMachine.On(Transitions.Then2);
+            //    _engine.ElseList.Add(func);
+            //}
+            //else if (_stateMachine.State == States.Then2)
+            //{
+            //    _stateMachine.On(Transitions.Then2);
+            //    _engine.ElseList.Add(func);
+            //}
             
             return this;
         }
@@ -92,10 +92,11 @@ namespace StrongRecursion
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        public RecursionBuilder<TParams, TResult> Else(Func<TParams, TResult, StackFrame<TParams, TResult>> func)
+        public RecursionBuilder<TParams, TResult> Else(Func<TParams, TParams> nextFunc, Func<TParams, TParams, TResult> valueFunc)
         {
             _stateMachine.On(Transitions.Else);
-            _engine.ElseList.Add(func);
+            _engine.NextItemFunctionList.Add(nextFunc);
+            _engine.ElseList.Add(valueFunc);
             return this;
         }
 

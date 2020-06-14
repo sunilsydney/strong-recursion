@@ -61,34 +61,34 @@ namespace StrongRecursion.Test
 
             int nodeCount = 0;
 
-            var result = new RecursionBuilder<TreeParams, TreeResult>()
-                .If((p) =>
-                {
-                    return (p.Node == null);
-                })
-                .Then((p, r) =>
-                {
-                    return new TreeResult();
-                })
-                .Else((p, r) =>
-                {
-                    Log(p.Node.Data);
-                    nodeCount++;
+            //var result = new RecursionBuilder<TreeParams, TreeResult>()
+            //    .If((p) =>
+            //    {
+            //        return (p.Node == null);
+            //    })
+            //    .Then((p, r) =>
+            //    {
+            //        return new TreeResult();
+            //    })
+            //    .Else((p, r) =>
+            //    {
+            //        Log(p.Node.Data);
+            //        nodeCount++;
 
-                    return new StackFrame<TreeParams, TreeResult>()
-                    {
-                        Params = new TreeParams { Node = p.Node.Left }
-                    };
-                })
-                .Then((p, r) =>
-                {
-                    return new StackFrame<TreeParams, TreeResult>()
-                    {
-                        Params = new TreeParams { Node = p.Node.Right }
-                    };
-                })
-                .Build()
-                .Run(new TreeParams { Node = node });
+            //        return new StackFrame<TreeParams, TreeResult>()
+            //        {
+            //            Params = new TreeParams { Node = p.Node.Left }
+            //        };
+            //    })
+            //    .Then((p, r) =>
+            //    {
+            //        return new StackFrame<TreeParams, TreeResult>()
+            //        {
+            //            Params = new TreeParams { Node = p.Node.Right }
+            //        };
+            //    })
+            //    .Build()
+            //    .Run(new TreeParams { Node = node });
          
             return nodeCount;
         }
@@ -135,32 +135,32 @@ namespace StrongRecursion.Test
         {
             StringBuilder sbuilder = new StringBuilder();
 
-            var result = new RecursionBuilder<TreeParams, TreeResult>()
-                .If((p) =>
-                {
-                    return (p.Node == null);
-                })                
-                .Then((p, r) =>
-                {
-                    return new TreeResult();
-                })               
-                .Else((p, r) =>
-                {
-                    sbuilder.Append(p.Node.Data + "|");
-                    return new StackFrame<TreeParams, TreeResult>()
-                    {
-                        Params = new TreeParams { Node = p.Node.Left }
-                    };
-                })
-                .Then((p, r) =>
-                {
-                    return new StackFrame<TreeParams, TreeResult>()
-                    {
-                        Params = new TreeParams { Node = p.Node.Right }
-                    };
-                })
-                .Build()
-                .Run(new TreeParams { Node = node });
+            //var result = new RecursionBuilder<TreeParams, TreeResult>()
+            //    .If((p) =>
+            //    {
+            //        return (p.Node == null);
+            //    })                
+            //    .Then((p, r) =>
+            //    {
+            //        return new TreeResult();
+            //    })               
+            //    .Else((p, r) =>
+            //    {
+            //        sbuilder.Append(p.Node.Data + "|");
+            //        return new StackFrame<TreeParams, TreeResult>()
+            //        {
+            //            Params = new TreeParams { Node = p.Node.Left }
+            //        };
+            //    })
+            //    .Then((p, r) =>
+            //    {
+            //        return new StackFrame<TreeParams, TreeResult>()
+            //        {
+            //            Params = new TreeParams { Node = p.Node.Right }
+            //        };
+            //    })
+            //    .Build()
+            //    .Run(new TreeParams { Node = node });
 
             return sbuilder.ToString();
         }

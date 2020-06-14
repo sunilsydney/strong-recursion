@@ -23,7 +23,7 @@ namespace StrongRecursion
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        RecursionBuilder<TParams, TResult> Then(Func<TParams, TResult, TResult> func);
+        RecursionBuilder<TParams, TResult> Then(Func<TParams, TResult> func);
 
         /// <summary>
         /// When evaluated to true, leads to a recursive action
@@ -38,7 +38,7 @@ namespace StrongRecursion
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        RecursionBuilder<TParams, TResult> Then(Func<TParams, TResult, StackFrame<TParams, TResult>> func);
+        RecursionBuilder<TParams, TResult> Then1(Func<TParams, TResult, TResult> func);
 
         /// <summary>
         /// Optional action to perform if no condition evaluated to true.
@@ -46,7 +46,7 @@ namespace StrongRecursion
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        RecursionBuilder<TParams, TResult> Else(Func<TParams, TResult, StackFrame<TParams, TResult>> func);
+        RecursionBuilder<TParams, TResult> Else(Func<TParams, TResult, TResult> func);
         
         /// <summary>
         /// Builds a recursion engine from the current state of builder

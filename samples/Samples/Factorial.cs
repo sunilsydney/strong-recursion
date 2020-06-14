@@ -36,29 +36,19 @@ namespace Samples
         }
 
         /// <summary>
-        /// TODO make this closer to original code
+        /// 
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
         private int FactorialByStrongRecursion(int number)
         {
-            var answer = new RecursionBuilder<FParams, FResult>()
-                .If((p) =>
-                {
-                    return (p.n == 0);
-                })
-                .Then((p, r) =>
-                {
-                    return new FResult() { result = 1 * r.result };
-                })
-                .Else((p, r) =>
-                {                   
-                    return new StackFrame<FParams, FResult>()
-                    {
-                        Params = new FParams { n = p.n - 1 },
-                        Result = new FResult { result = p.n * r.result }
-                    };
-                })
+            var answer = new RecursionBuilder<FParams, FResult>() // TODO use Interface
+                .If((p) => p.n == 0)
+                .Then((p) => new FResult { result = 1 })
+                .Else(
+                        (cur) => new FParams { n = cur.n - 1 },
+                        (cur, next) => new FResult { result = cur.n * next.n }                        
+                     )
                 .Build()
                 .Run(new FParams { n = number });
 
